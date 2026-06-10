@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 type KanaCard = {
   kana: string;
@@ -76,6 +76,16 @@ function shuffleCards(cards: KanaCard[]): KanaCard[] {
   return copy;
 }
 
+function getJapaneseVoice(): SpeechSynthesisVoice | undefined {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    return undefined;
+  }
+
+  return window.speechSynthesis
+    .getVoices()
+    .find((voice) => voice.lang.toLowerCase().startsWith('ja'));
+}
+
 function App() {
   const [started, setStarted] = useState(false);
   const [deck, setDeck] = useState<KanaCard[]>(() => shuffleCards(baseCards));
@@ -83,6 +93,7 @@ function App() {
   const [revealed, setRevealed] = useState(false);
   const [knownCount, setKnownCount] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [audioUnavailable, setAudioUnavailable] = useState(false);
 
   const currentCard = deck[index];
   const complete = started && index >= deck.length;
@@ -92,13 +103,44 @@ function App() {
     return Math.round((Math.min(index, deck.length) / deck.length) * 100);
   }, [deck.length, index, started]);
 
+  const playPronunciation = useCallback((card: KanaCard) => {
+    if (
+      typeof window === 'undefined' ||
+      !('speechSynthesis' in window) ||
+      !('SpeechSynthesisUtterance' in window)
+    ) {
+      setAudioUnavailable(true);
+      return;
+    }
+
+    const utterance = new window.SpeechSynthesisUtterance(card.kana);
+    utterance.lang = 'ja-JP';
+    utterance.rate = 0.82;
+    utterance.pitch = 1;
+
+    const japaneseVoice = getJapaneseVoice();
+    if (japaneseVoice) {
+      utterance.voice = japaneseVoice;
+    }
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    setAudioUnavailable(false);
+  }, []);
+
   const startPractice = () => {
     setDeck(shuffleCards(baseCards));
     setIndex(0);
     setRevealed(false);
     setKnownCount(0);
     setReviewCount(0);
+    setAudioUnavailable(false);
     setStarted(true);
+  };
+
+  const revealAnswer = () => {
+    setRevealed(true);
+    playPronunciation(currentCard);
   };
 
   const nextCard = (knewIt: boolean) => {
@@ -108,6 +150,7 @@ function App() {
       setReviewCount((count) => count + 1);
     }
     setRevealed(false);
+    setAudioUnavailable(false);
     setIndex((currentIndex) => currentIndex + 1);
   };
 
@@ -118,6 +161,7 @@ function App() {
     setRevealed(false);
     setKnownCount(0);
     setReviewCount(0);
+    setAudioUnavailable(false);
     setStarted(true);
   };
 
@@ -133,7 +177,10 @@ function App() {
               Japanese hiragana, one playful hint at a time.
             </h1>
             <p className="mx-auto max-w-2xl text-lg leading-8 text-slate-600">
-              Nani helps you tap through Japanese hiragana, reveal the pronunciation, and remember each symbol with a quick visual mnemonic.
+              Nani helps you tap through Japanese hiragana, reveal the pronunciation, hear the sound, and remember each symbol with a quick visual mnemonic.
+            </p>
+            <p className="mx-auto max-w-xl rounded-full border border-orange-200 bg-white/75 px-5 py-3 text-sm font-bold text-orange-700 shadow-sm">
+              🔊 Turn your volume up — Nani plays each kana sound when you reveal the answer.
             </p>
           </div>
           <div className="grid w-full max-w-3xl gap-4 sm:grid-cols-3">
@@ -153,7 +200,7 @@ function App() {
           <button
             type="button"
             onClick={startPractice}
-            className="rounded-full bg-slate-950 px-10 py-4 text-lg font-bold text-white shadow-xl shadow-orange-200 transition hover:-translate-y-0.5 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300"
+            className="cursor-pointer rounded-full bg-slate-950 px-10 py-4 text-lg font-bold text-white shadow-xl shadow-orange-200 transition hover:-translate-y-0.5 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300"
           >
             Start practice
           </button>
@@ -178,14 +225,14 @@ function App() {
               <button
                 type="button"
                 onClick={startPractice}
-                className="rounded-2xl bg-slate-950 px-6 py-4 font-bold text-white transition hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300"
+                className="cursor-pointer rounded-2xl bg-slate-950 px-6 py-4 font-bold text-white transition hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300"
               >
                 Shuffle and restart
               </button>
               <button
                 type="button"
                 onClick={restartWithReview}
-                className="rounded-2xl border border-orange-200 bg-orange-50 px-6 py-4 font-bold text-orange-700 transition hover:bg-orange-100 focus:outline-none focus:ring-4 focus:ring-orange-200"
+                className="cursor-pointer rounded-2xl border border-orange-200 bg-orange-50 px-6 py-4 font-bold text-orange-700 transition hover:bg-orange-100 focus:outline-none focus:ring-4 focus:ring-orange-200"
               >
                 Practice again
               </button>
@@ -203,11 +250,12 @@ function App() {
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-orange-700">Nani practice</p>
             <h1 className="text-2xl font-black">Tap the card to reveal the sound</h1>
+            <p className="mt-1 text-sm font-semibold text-slate-500">🔊 Turn your volume up before you reveal each card.</p>
           </div>
           <button
             type="button"
             onClick={startPractice}
-            className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-orange-300 hover:text-orange-700"
+            className="cursor-pointer rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-orange-300 hover:text-orange-700"
           >
             Restart
           </button>
@@ -220,8 +268,8 @@ function App() {
         <div className="grid flex-1 items-center gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <button
             type="button"
-            onClick={() => setRevealed(true)}
-            className="group min-h-[28rem] rounded-[2.5rem] border border-white/80 bg-white/85 p-8 text-left shadow-2xl shadow-orange-200/50 backdrop-blur transition hover:-translate-y-1 hover:shadow-orange-300/60 focus:outline-none focus:ring-4 focus:ring-orange-300"
+            onClick={revealAnswer}
+            className="group min-h-[28rem] cursor-pointer rounded-[2.5rem] border border-white/80 bg-white/85 p-8 text-left shadow-2xl shadow-orange-200/50 backdrop-blur transition hover:-translate-y-1 hover:shadow-orange-300/60 focus:outline-none focus:ring-4 focus:ring-orange-300"
             aria-label="Reveal the answer"
           >
             <div className="flex items-center justify-between">
@@ -268,6 +316,28 @@ function App() {
                   <p className="mt-2 text-xl font-bold">{currentCard.pronunciation}</p>
                 </div>
 
+                <div className="rounded-3xl border border-sky-100 bg-sky-50 p-5">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">Audio</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-600">Turn your volume up, then listen for “{currentCard.romaji}”.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => playPronunciation(currentCard)}
+                      className="cursor-pointer rounded-2xl bg-slate-950 px-5 py-3 font-black text-white transition hover:-translate-y-0.5 hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-200"
+                      aria-label={`Hear ${currentCard.kana} pronounced again`}
+                    >
+                      🔊 Hear again
+                    </button>
+                  </div>
+                  {audioUnavailable ? (
+                    <p className="mt-3 rounded-2xl bg-white/75 px-4 py-3 text-sm font-semibold text-slate-600">
+                      Audio is not available in this browser. Try Chrome, Edge, or Safari with system voices enabled.
+                    </p>
+                  ) : null}
+                </div>
+
                 <div className="rounded-3xl border border-orange-100 bg-orange-50 p-5">
                   <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-700">Mnemonic</p>
                   <p className="mt-2 text-lg leading-8 text-slate-700">{currentCard.mnemonic}</p>
@@ -277,14 +347,14 @@ function App() {
                   <button
                     type="button"
                     onClick={() => nextCard(true)}
-                    className="rounded-2xl bg-emerald-600 px-5 py-4 font-black text-white transition hover:-translate-y-0.5 hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+                    className="cursor-pointer rounded-2xl bg-emerald-600 px-5 py-4 font-black text-white transition hover:-translate-y-0.5 hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-200"
                   >
                     I knew it
                   </button>
                   <button
                     type="button"
                     onClick={() => nextCard(false)}
-                    className="rounded-2xl bg-orange-600 px-5 py-4 font-black text-white transition hover:-translate-y-0.5 hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-200"
+                    className="cursor-pointer rounded-2xl bg-orange-600 px-5 py-4 font-black text-white transition hover:-translate-y-0.5 hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-200"
                   >
                     Review again
                   </button>
