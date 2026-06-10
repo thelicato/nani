@@ -9,6 +9,8 @@ type KanaCard = {
   visualCue: string;
 };
 
+const logoPath = '/logo.svg';
+
 const baseCards: KanaCard[] = [
   { kana: 'あ', romaji: 'a', row: 'vowel', pronunciation: "Like 'a' in 'father'", mnemonic: "A little apple has a stem and a leaf. Say 'a' for apple.", visualCue: '🍎' },
   { kana: 'い', romaji: 'i', row: 'vowel', pronunciation: "Like 'ee' in 'see'", mnemonic: "Two ink strokes stand side by side. Ink starts with the 'i' sound.", visualCue: '🖊️' },
@@ -169,8 +171,15 @@ function App() {
     return (
       <main className="min-h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-rose-50 to-amber-100 px-6 py-8 text-slate-900">
         <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center gap-10 text-center">
-          <div className="rounded-full border border-orange-200 bg-white/80 px-4 py-2 text-sm font-semibold uppercase tracking-[0.28em] text-orange-700 shadow-sm">
-            Nani
+          <div className="flex flex-col items-center gap-4">
+            <img
+              src={logoPath}
+              alt="Nani logo"
+              className="h-28 w-28 rounded-full shadow-2xl shadow-orange-200/80 sm:h-36 sm:w-36"
+            />
+            <div className="rounded-full border border-orange-200 bg-white/80 px-4 py-2 text-sm font-semibold uppercase tracking-[0.28em] text-orange-700 shadow-sm">
+              Nani
+            </div>
           </div>
           <div className="space-y-6">
             <h1 className="text-5xl font-black tracking-tight sm:text-7xl">
@@ -216,7 +225,12 @@ function App() {
       <main className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-100 px-6 py-8 text-slate-900">
         <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl flex-col items-center justify-center text-center">
           <div className="rounded-[2rem] border border-white/80 bg-white/85 p-8 shadow-2xl shadow-orange-200/60 backdrop-blur sm:p-12">
-            <div className="text-7xl">🎉</div>
+            <img
+              src={logoPath}
+              alt="Nani logo"
+              className="mx-auto h-24 w-24 rounded-full shadow-xl shadow-orange-200/80"
+            />
+            <div className="mt-6 text-7xl">🎉</div>
             <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl">Deck complete!</h1>
             <p className="mt-4 text-lg text-slate-600">
               You marked {knownCount} of {deck.length} cards as known. Score: {score}%.
@@ -247,10 +261,17 @@ function App() {
     <main className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-100 px-6 py-6 text-slate-900">
       <section className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-5xl flex-col gap-6">
         <header className="flex flex-col gap-4 rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.25em] text-orange-700">Nani practice</p>
-            <h1 className="text-2xl font-black">Tap the card to reveal the sound</h1>
-            <p className="mt-1 text-sm font-semibold text-slate-500">🔊 Turn your volume up before you reveal each card.</p>
+          <div className="flex items-center gap-4">
+            <img
+              src={logoPath}
+              alt="Nani logo"
+              className="h-16 w-16 shrink-0 rounded-full shadow-lg shadow-orange-200/70"
+            />
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.25em] text-orange-700">Nani practice</p>
+              <h1 className="text-2xl font-black">Tap the card to reveal the sound</h1>
+              <p className="mt-1 text-sm font-semibold text-slate-500">🔊 Turn your volume up before you reveal each card.</p>
+            </div>
           </div>
           <button
             type="button"

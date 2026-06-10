@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E84A5F" />
+      <stop offset="100%" stop-color="#2A363B" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="2" dy="4" stdDeviation="6" flood-color="#2A363B" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="170" fill="#FFEEE4" />
+
+  <!-- Back card (darker, offset) -->
+  <rect x="105" y="95" width="150" height="190" rx="18" fill="#2A363B" opacity="0.12" transform="rotate(-8 180 190)" />
+
+  <!-- Front card -->
+  <rect x="110" y="90" width="150" height="190" rx="18" fill="url(#cardGrad)" filter="url(#shadow)" transform="rotate(6 185 185)" />
+
+  <!-- Card inner highlight line -->
+  <rect x="118" y="98" width="134" height="174" rx="12" fill="none" stroke="#FFEEE4" stroke-width="1.5" opacity="0.3" transform="rotate(6 185 185)" />
+
+  <!-- Hiragana なに -->
+  <text x="185" y="180" font-family="'Hiragino Sans', 'Yu Gothic', 'Meiryo', 'Noto Sans JP', sans-serif" font-size="60" font-weight="700" fill="#FFEEE4" text-anchor="middle" dominant-baseline="central" transform="rotate(6 185 185)">なに</text>
+
+  <!-- Subtle corner accent -->
+  <circle cx="245" cy="115" r="8" fill="#FFEEE4" opacity="0.25" transform="rotate(6 185 185)" />
+</svg>
