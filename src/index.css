@@ -27,3 +27,8 @@ button:disabled,
 button {
   font: inherit;
 }
+
+.nani-wordmark {
+  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.075em;
+}

@@ -171,20 +171,23 @@ function App() {
     return (
       <main className="min-h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-rose-50 to-amber-100 px-6 py-8 text-slate-900">
         <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center gap-10 text-center">
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-5">
             <img
               src={logoPath}
               alt="Nani logo"
-              className="h-28 w-28 rounded-full shadow-2xl shadow-orange-200/80 sm:h-36 sm:w-36"
+              className="h-32 w-32 rounded-full shadow-2xl shadow-orange-200/80 sm:h-40 sm:w-40"
             />
-            <div className="rounded-full border border-orange-200 bg-white/80 px-4 py-2 text-sm font-semibold uppercase tracking-[0.28em] text-orange-700 shadow-sm">
-              Nani
+            <div className="space-y-2">
+              <p className="text-sm font-black uppercase tracking-[0.35em] text-orange-700">Hiragana flashcards</p>
+              <h1 className="nani-wordmark bg-gradient-to-br from-rose-500 via-orange-500 to-slate-950 bg-clip-text text-7xl font-black leading-none text-transparent drop-shadow-sm sm:text-8xl md:text-9xl">
+                Nani
+              </h1>
             </div>
           </div>
           <div className="space-y-6">
-            <h1 className="text-5xl font-black tracking-tight sm:text-7xl">
+            <h2 className="text-4xl font-black tracking-tight sm:text-6xl">
               Japanese hiragana, one playful hint at a time.
-            </h1>
+            </h2>
             <p className="mx-auto max-w-2xl text-lg leading-8 text-slate-600">
               Nani helps you tap through Japanese hiragana, reveal the pronunciation, hear the sound, and remember each symbol with a quick visual mnemonic.
             </p>
@@ -282,8 +285,17 @@ function App() {
           </button>
         </header>
 
-        <div className="rounded-full bg-white/70 p-2 shadow-inner">
-          <div className="h-3 rounded-full bg-orange-500 transition-all duration-500" style={{ width: `${percent}%` }} />
+        <div className="rounded-[1.5rem] border border-white/70 bg-white/70 p-4 shadow-sm backdrop-blur">
+          <div className="mb-2 flex items-center justify-between text-sm font-black text-slate-600">
+            <span>Progress</span>
+            <span>{index} of {deck.length} completed</span>
+          </div>
+          <div className="relative h-6 overflow-hidden rounded-full bg-white shadow-inner">
+            <div className="h-full rounded-full bg-orange-500 transition-all duration-500" style={{ width: `${percent}%` }} />
+            <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-slate-700">
+              {percent}% complete
+            </div>
+          </div>
         </div>
 
         <div className="grid flex-1 items-center gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -293,12 +305,9 @@ function App() {
             className="group min-h-[28rem] cursor-pointer rounded-[2.5rem] border border-white/80 bg-white/85 p-8 text-left shadow-2xl shadow-orange-200/50 backdrop-blur transition hover:-translate-y-1 hover:shadow-orange-300/60 focus:outline-none focus:ring-4 focus:ring-orange-300"
             aria-label="Reveal the answer"
           >
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-orange-100 px-4 py-2 text-sm font-bold uppercase tracking-[0.2em] text-orange-700">
-                {currentCard.row} row
-              </span>
-              <span className="text-sm font-bold text-slate-400">
-                {progress} / {deck.length}
+            <div className="flex items-center justify-end">
+              <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-500">
+                Card {progress} / {deck.length}
               </span>
             </div>
             <div className="mt-10 flex flex-col items-center justify-center text-center">
