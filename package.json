@@ -1,20 +1,23 @@
 {
   "name": "nani",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build && tsc -b",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-router": "latest",
     "@vitejs/plugin-react": "latest",
     "react": "latest",
     "react-dom": "latest"
   },
   "devDependencies": {
     "@tailwindcss/vite": "latest",
+    "@tanstack/router-plugin": "latest",
+    "@tanstack/virtual-file-routes": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "tailwindcss": "latest",
