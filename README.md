@@ -1,6 +1,8 @@
 # Nani
 
-![Nani logo](public/logo.png)
+<p align="center">
+  <img src="public/logo.png" alt="Nani logo" width="220">
+</p>
 
 Nani is a friendly hiragana flashcard app for people who are starting to learn Japanese. It helps learners recognize the 46 basic hiragana characters through large visual cards, pronunciation guidance, audio playback, and short memory prompts.
 
