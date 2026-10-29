@@ -1,0 +1,4 @@
+minimumReleaseAgeExclude:
+  - zod@4.6.6
+  - seroval@1.6.11
+  - seroval@1.6.10
